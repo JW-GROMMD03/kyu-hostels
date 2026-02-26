@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Hostel - Kirinyaga Hostels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 0;
+        }
+
+        .page-title {
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            color: var(--dark);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: var(--gray);
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .form-section h2 {
+            margin-bottom: 25px;
+            color: var(--dark);
+            font-size: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Image Upload */
+        .image-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .image-upload-box {
+            border: 2px dashed #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light);
+        }
+
+        .image-upload-box:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+
+        .image-upload-box.has-image {
+            border-style: solid;
+            border-color: var(--success);
+        }
+
+        .image-upload-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .image-upload-box input {
+            display: none;
+        }
+
+        .image-upload-box .upload-placeholder {
+            color: var(--gray);
+        }
+
+        .image-upload-box .upload-placeholder i {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .image-upload-box .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--danger);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            display: none;
+        }
+
+        .image-upload-box.has-image .remove-image {
+            display: flex;
+        }
+
+        /* VR Upload */
+        .vr-upload-box {
+            border: 2px dashed var(--secondary);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f3ff;
+            margin: 20px 0;
+        }
+
+        .vr-upload-box:hover {
+            background: #ede9fe;
+        }
+
+        .vr-upload-box input {
+            display: none;
+        }
+
+        /* Amenities Grid */
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .amenity-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .amenity-checkbox input {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        /* Availability Calendar */
+        .calendar {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .calendar-day.available {
+            background: var(--success);
+            color: white;
+        }
+
+        .calendar-day.unavailable {
+            background: var(--danger);
+            color: white;
+        }
+
+        .calendar-day.past {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Map */
+        #map {
+            height: 300px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .image-upload-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="window.location.href='../student/index.html'">Kirinyaga Hostels</div>
+            <div class="nav-links">
+                <a href="dashboard-owner.html">Dashboard</a>
+                <a href="settings.html">Settings</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="page-title">
+                <h1 id="pageTitle">Add New Hostel</h1>
+                <p>List your property and start earning</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+            <div class="alert alert-info" id="infoAlert"></div>
+
+            <form id="hostelForm" class="form-card" onsubmit="saveHostel(event)">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h2>Basic Information</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="name">Hostel Name *</label>
+                            <input type="text" id="name" required placeholder="e.g., University View Hostels">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hostelType">Hostel Type *</label>
+                            <select id="hostelType" required>
+                                <option value="">Select type</option>
+                                <option value="bedsitter">Bedsitter</option>
+                                <option value="single">Single Room</option>
+                                <option value="one_bedroom">One Bedroom</option>
+                                <option value="studio">Studio</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="capacity">Capacity (persons) *</label>
+                            <input type="number" id="capacity" min="1" max="6" value="1" required>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="description">Description *</label>
+                            <textarea id="description" required placeholder="Describe your hostel, facilities, nearby amenities, etc."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="form-section">
+                    <h2>Location</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="address">Full Address *</label>
+                            <input type="text" id="address" required placeholder="e.g., 123 Kenyatta Avenue, Kutus">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="latitude">Latitude</label>
+                            <input type="number" id="latitude" step="any" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="longitude">Longitude</label>
+                            <input type="number" id="longitude" step="any" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="distance">Distance from University (km) *</label>
+                            <input type="number" id="distance" step="0.1" min="0" max="50" required>
+                        </div>
+                    </div>
+
+                    <div id="map"></div>
+                    <p style="color: var(--gray); font-size: 14px; margin-top: 10px;">
+                        Click on the map to set exact location
+                    </p>
+                </div>
+
+                <!-- Pricing -->
+                <div class="form-section">
+                    <h2>Pricing</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="rent">Monthly Rent (KES) *</label>
+                            <input type="number" id="rent" min="0" step="100" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deposit">Deposit (KES) *</label>
+                            <input type="number" id="deposit" min="0" step="100" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="waterCharge">Water Charge (KES/month)</label>
+                            <input type="number" id="waterCharge" min="0" step="50" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="electricityCharge">Electricity Charge (KES/month)</label>
+                            <input type="number" id="electricityCharge" min="0" step="50" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images -->
+                <div class="form-section">
+                    <h2>Images</h2>
+                    <p style="color: var(--gray); margin-bottom: 20px;">Upload 3-6 high-quality images of your hostel</p>
+                    
+                    <div class="image-upload-grid" id="imageUploadGrid">
+                        <!-- Image upload boxes will be generated here -->
+                    </div>
+                </div>
+
+                <!-- 360° Virtual Tour -->
+                <div class="form-section">
+                    <h2>360° Virtual Tour</h2>
+                    <p style="color: var(--gray); margin-bottom: 20px;">Upload a 360° image for virtual tour (optional)</p>
+                    
+                    <div class="vr-upload-box" onclick="document.getElementById('vrImage').click()">
+                        <input type="file" id="vrImage" accept="image/*" onchange="handleVRImage(this)">
+                        <i style="font-size: 32px; display: block; margin-bottom: 10px;">🔄</i>
+                        <span id="vrText">Click to upload 360° image</span>
+                    </div>
+                </div>
+
+                <!-- Amenities -->
+                <div class="form-section">
+                    <h2>Amenities</h2>
+                    
+                    <div class="amenities-grid" id="amenitiesGrid">
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="wifi"> WiFi
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="water" checked> Water
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="electricity" checked> Electricity
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="security"> Security
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="parking"> Parking
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="kitchen"> Kitchen
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="bathroom" checked> Bathroom
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="furniture"> Furniture
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="fridge"> Fridge
+                        </label>
+                        <label class="amenity-checkbox">
+                            <input type="checkbox" value="tv"> TV
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Availability Calendar -->
+                <div class="form-section">
+                    <h2>Availability</h2>
+                    <p style="color: var(--gray); margin-bottom: 20px;">Click on dates to mark as unavailable</p>
+                    
+                    <div class="calendar" id="calendar">
+                        <!-- Calendar will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span class="loader" id="submitLoader" style="display: none;"></span>
+                        <span id="submitText">Save Hostel</span>
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="window.location.href='dashboard-owner.html'">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://your-oracle-backend.com/api';
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyBizaLbe_k0W-xEOBEhkNFcwZPC8eFl-OQ';
+        
+        let token = localStorage.getItem('access_token');
+        let map = null;
+        let marker = null;
+        let hostelId = new URLSearchParams(window.location.search).get('id');
+        let isEditMode = !!hostelId;
+        let images = [];
+        let vrImage = null;
+        let unavailableDates = [];
+
+        // Check authentication
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // Set page title
+        if (isEditMode) {
+            document.getElementById('pageTitle').textContent = 'Edit Hostel';
+            loadHostelData();
+        }
+
+        // Initialize image upload grid
+        function initImageUploadGrid() {
+            const grid = document.getElementById('imageUploadGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 6; i++) {
+                const box = document.createElement('div');
+                box.className = 'image-upload-box';
+                box.setAttribute('onclick', `uploadImage(${i})`);
+                box.innerHTML = `
+                    <input type="file" id="image${i}" accept="image/*" onchange="handleImage(this, ${i})">
+                    <div class="upload-placeholder">
+                        <i>📷</i>
+                        <span>Upload Image ${i + 1}</span>
+                    </div>
+                    <div class="remove-image" onclick="removeImage(${i}, event)">✕</div>
+                `;
+                grid.appendChild(box);
+            }
+        }
+
+        function uploadImage(index) {
+            document.getElementById(`image${index}`).click();
+        }
+
+        function handleImage(input, index) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const box = document.getElementById(`image${index}`).parentElement;
+                    box.classList.add('has-image');
+                    
+                    // Add preview
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    
+                    // Remove placeholder
+                    const placeholder = box.querySelector('.upload-placeholder');
+                    if (placeholder) {
+                        placeholder.remove();
+                    }
+                    
+                    // Add image if not already present
+                    if (!box.querySelector('img')) {
+                        box.appendChild(img);
+                    } else {
+                        box.querySelector('img').src = e.target.result;
+                    }
+                    
+                    // Store image
+                    images[index] = input.files[0];
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeImage(index, event) {
+            event.stopPropagation();
+            
+            const box = document.getElementById(`image${index}`).parentElement;
+            box.classList.remove('has-image');
+            
+            // Remove preview
+            const img = box.querySelector('img');
+            if (img) {
+                img.remove();
+            }
+            
+            // Restore placeholder
+            const placeholder = document.createElement('div');
+            placeholder.className = 'upload-placeholder';
+            placeholder.innerHTML = '<i>📷</i><span>Upload Image ' + (index + 1) + '</span>';
+            box.appendChild(placeholder);
+            
+            // Clear file input
+            document.getElementById(`image${index}`).value = '';
+            
+            // Remove from array
+            images[index] = null;
+        }
+
+        function handleVRImage(input) {
+            if (input.files && input.files[0]) {
+                vrImage = input.files[0];
+                document.getElementById('vrText').textContent = `Selected: ${vrImage.name}`;
+            }
+        }
+
+        // Initialize Google Maps
+        function initMap() {
+            const defaultLocation = { lat: -0.5, lng: 37.5 }; // Kirinyaga University area
+            
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: defaultLocation,
+                mapTypeId: 'roadmap'
+            });
+
+            marker = new google.maps.Marker({
+                position: defaultLocation,
+                map: map,
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            });
+
+            // Update coordinates when marker is dragged
+            google.maps.event.addListener(marker, 'dragend', function() {
+                const position = marker.getPosition();
+                document.getElementById('latitude').value = position.lat();
+                document.getElementById('longitude').value = position.lng();
+            });
+
+            // Allow clicking on map to place marker
+            google.maps.event.addListener(map, 'click', function(event) {
+                marker.setPosition(event.latLng);
+                document.getElementById('latitude').value = event.latLng.lat();
+                document.getElementById('longitude').value = event.latLng.lng();
+            });
+        }
+
+        // Load Google Maps script
+        function loadGoogleMaps() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // Initialize calendar
+        function initCalendar() {
+            const calendar = document.getElementById('calendar');
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            
+            let html = `
+                <div class="calendar-header">
+                    <button class="btn btn-outline" onclick="changeMonth(-1)">←</button>
+                    <h3>${today.toLocaleString('default', { month: 'long' })} ${currentYear}</h3>
+                    <button class="btn btn-outline" onclick="changeMonth(1)">→</button>
+                </div>
+                <div class="calendar-grid">
+            `;
+            
+            // Day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                html += `<div style="text-align: center; font-weight: 600;">${day}</div>`;
+            });
+            
+            // Get first day of month
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            
+            // Fill empty cells
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div></div>';
+            }
+            
+            // Fill days
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(currentYear, currentMonth, d);
+                const dateStr = date.toISOString().split('T')[0];
+                const isPast = date < new Date(today.setHours(0,0,0,0));
+                const isUnavailable = unavailableDates.includes(dateStr);
+                
+                html += `
+                    <div class="calendar-day ${isUnavailable ? 'unavailable' : 'available'} ${isPast ? 'past' : ''}" 
+                         onclick="toggleDate('${dateStr}', ${isPast})">
+                        ${d}
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            calendar.innerHTML = html;
+        }
+
+        function changeMonth(delta) {
+            // Implement month change
+            alert('Month change coming soon');
+        }
+
+        function toggleDate(dateStr, isPast) {
+            if (isPast) return;
+            
+            const index = unavailableDates.indexOf(dateStr);
+            if (index === -1) {
+                unavailableDates.push(dateStr);
+            } else {
+                unavailableDates.splice(index, 1);
+            }
+            
+            initCalendar(); // Refresh calendar
+        }
+
+        async function loadHostelData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/hostels/${hostelId}/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    populateForm(data);
+                }
+            } catch (error) {
+                console.error('Error loading hostel:', error);
+                showError('Failed to load hostel data');
+            }
+        }
+
+        function populateForm(data) {
+            // Basic info
+            document.getElementById('name').value = data.name;
+            document.getElementById('hostelType').value = data.hostel_type;
+            document.getElementById('capacity').value = data.capacity || 1;
+            document.getElementById('description').value = data.description;
+            
+            // Location
+            document.getElementById('address').value = data.address;
+            document.getElementById('latitude').value = data.latitude;
+            document.getElementById('longitude').value = data.longitude;
+            document.getElementById('distance').value = data.distance_to_university;
+            
+            // Pricing
+            document.getElementById('rent').value = data.rent;
+            document.getElementById('deposit').value = data.deposit;
+            document.getElementById('waterCharge').value = data.water_charge || 0;
+            document.getElementById('electricityCharge').value = data.electricity_charge || 0;
+            
+            // Amenities
+            const amenities = [
+                'wifi', 'water', 'electricity', 'security', 'parking',
+                'kitchen', 'bathroom', 'furniture', 'fridge', 'tv'
+            ];
+            
+            amenities.forEach(amenity => {
+                const checkbox = document.querySelector(`input[value="${amenity}"]`);
+                if (checkbox) {
+                    checkbox.checked = data[`has_${amenity}`] || false;
+                }
+            });
+            
+            // Update marker position
+            if (map && marker) {
+                const position = { lat: parseFloat(data.latitude), lng: parseFloat(data.longitude) };
+                marker.setPosition(position);
+                map.setCenter(position);
+            }
+            
+            // Load images (would need to handle existing images)
+            if (data.images) {
+                data.images.forEach((image, index) => {
+                    if (index < 6) {
+                        const box = document.getElementById(`image${index}`).parentElement;
+                        box.classList.add('has-image');
+                        
+                        const img = document.createElement('img');
+                        img.src = image.image;
+                        
+                        const placeholder = box.querySelector('.upload-placeholder');
+                        if (placeholder) {
+                            placeholder.remove();
+                        }
+                        
+                        if (!box.querySelector('img')) {
+                            box.appendChild(img);
+                        }
+                    }
+                });
+            }
+            
+            // Load availability
+            if (data.availability) {
+                unavailableDates = data.availability
+                    .filter(a => !a.is_available)
+                    .map(a => a.date);
+                initCalendar();
+            }
+        }
+
+        async function saveHostel(event) {
+            event.preventDefault();
+            
+            // Validate images
+            const validImages = images.filter(img => img !== null);
+            if (!isEditMode && validImages.length < 3) {
+                showError('Please upload at least 3 images');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('submitLoader').style.display = 'inline-block';
+            document.getElementById('submitText').textContent = isEditMode ? ' Updating...' : ' Saving...';
+            document.getElementById('submitBtn').disabled = true;
+
+            try {
+                const formData = new FormData();
+                
+                // Basic info
+                formData.append('name', document.getElementById('name').value);
+                formData.append('hostel_type', document.getElementById('hostelType').value);
+                formData.append('capacity', document.getElementById('capacity').value);
+                formData.append('description', document.getElementById('description').value);
+                
+                // Location
+                formData.append('address', document.getElementById('address').value);
+                formData.append('latitude', document.getElementById('latitude').value);
+                formData.append('longitude', document.getElementById('longitude').value);
+                formData.append('distance_to_university', document.getElementById('distance').value);
+                
+                // Pricing
+                formData.append('rent', document.getElementById('rent').value);
+                formData.append('deposit', document.getElementById('deposit').value);
+                formData.append('water_charge', document.getElementById('waterCharge').value);
+                formData.append('electricity_charge', document.getElementById('electricityCharge').value);
+                
+                // Amenities
+                const amenities = ['wifi', 'water', 'electricity', 'security', 'parking',
+                                 'kitchen', 'bathroom', 'furniture', 'fridge', 'tv'];
+                
+                amenities.forEach(amenity => {
+                    const checkbox = document.querySelector(`input[value="${amenity}"]`);
+                    formData.append(`has_${amenity}`, checkbox ? checkbox.checked : false);
+                });
+                
+                // Images
+                images.forEach((image, index) => {
+                    if (image) {
+                        formData.append('images', image);
+                    }
+                });
+                
+                // VR Image
+                if (vrImage) {
+                    formData.append('vr_image', vrImage);
+                }
+                
+                // Availability
+                formData.append('unavailable_dates', JSON.stringify(unavailableDates));
+
+                const url = isEditMode 
+                    ? `${API_BASE_URL}/hostels/${hostelId}/`
+                    : `${API_BASE_URL}/hostels/`;
+                
+                const method = isEditMode ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showSuccess(isEditMode ? 'Hostel updated successfully!' : 'Hostel added successfully!');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard-owner.html';
+                    }, 2000);
+                } else {
+                    const data = await response.json();
+                    showError(data.error || 'Failed to save hostel');
+                }
+            } catch (error) {
+                console.error('Error saving hostel:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                document.getElementById('submitLoader').style.display = 'none';
+                document.getElementById('submitText').textContent = isEditMode ? 'Update Hostel' : 'Save Hostel';
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+
+        function showSuccess(message) {
+            const alert = document.getElementById('successAlert');
+            alert.textContent = message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        function showError(message) {
+            const alert = document.getElementById('errorAlert');
+            alert.textContent = message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        // Initialize
+        initImageUploadGrid();
+        loadGoogleMaps();
+        initCalendar();
+    </script>
+</body>
+</html>

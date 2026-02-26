@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Details - Kirinyaga Hostels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .hostel-details {
+            padding: 40px 0;
+        }
+
+        /* Image Gallery */
+        .gallery {
+            margin-bottom: 30px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+
+        .thumbnail {
+            height: 100px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        .thumbnail:hover, .thumbnail.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbnail.vr-thumb {
+            position: relative;
+        }
+
+        .vr-thumb::after {
+            content: '360°';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        /* VR View */
+        .vr-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 1000;
+            display: none;
+        }
+
+        .vr-view.show {
+            display: block;
+        }
+
+        .vr-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        #vrFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* Info Card */
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .hostel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .hostel-title h1 {
+            font-size: 32px;
+            color: var(--dark);
+        }
+
+        .verified-badge {
+            background: var(--success);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .hostel-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            color: var(--gray);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .stars {
+            color: var(--warning);
+            font-size: 20px;
+        }
+
+        .rating-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .rating-count {
+            color: var(--gray);
+        }
+
+        /* Price History Chart */
+        .chart-container {
+            height: 200px;
+            margin: 30px 0;
+        }
+
+        /* Amenities Grid */
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .amenity-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .amenity-item.available {
+            color: var(--success);
+        }
+
+        .amenity-item.unavailable {
+            color: var(--gray);
+            opacity: 0.5;
+        }
+
+        /* Owner Info */
+        .owner-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .owner-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .owner-details h3 {
+            margin-bottom: 5px;
+        }
+
+        .owner-details p {
+            color: var(--gray);
+        }
+
+        .fraud-score {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .fraud-low {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .fraud-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .fraud-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Booking Card */
+        .booking-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .price {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .price span {
+            font-size: 16px;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        .price-breakdown {
+            margin: 20px 0;
+            padding: 20px 0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .total-row {
+            font-weight: 700;
+            font-size: 18px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .booking-form {
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .timer-widget {
+            background: var(--warning);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .timer-widget.show {
+            display: block;
+        }
+
+        .timer {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .emergency-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            margin-top: 50px;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .reviewer {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .reviewer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reviewer-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .reviewer-info p {
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .review-rating {
+            color: var(--warning);
+        }
+
+        .review-text {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid var(--light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 50px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Map */
+        #map {
+            height: 300px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-image {
+                height: 300px;
+            }
+            
+            .thumbnail-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .hostel-title h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background: #1a1a1a;
+        }
+        
+        .dark-mode .navbar,
+        .dark-mode .info-card,
+        .dark-mode .booking-card,
+        .dark-mode .review-card {
+            background: #2d2d2d;
+            color: white;
+        }
+        
+        .dark-mode .hostel-title h1,
+        .dark-mode .rating-value {
+            color: white;
+        }
+    </style>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="window.location.href='index.html'">Kirinyaga Hostels</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard-student.html">Dashboard</a>
+                <a href="#" onclick="toggleDarkMode()">🌙</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hostel-details">
+        <div class="container">
+            <!-- Loading State -->
+            <div id="loading" class="loader"></div>
+
+            <!-- Content (hidden initially) -->
+            <div id="content" style="display: none;">
+                <!-- Image Gallery -->
+                <div class="gallery">
+                    <div class="main-image" id="mainImage">
+                        <img src="" alt="Hostel main image">
+                    </div>
+                    <div class="thumbnail-grid" id="thumbnailGrid">
+                        <!-- Thumbnails will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- VR View -->
+                <div class="vr-view" id="vrView">
+                    <button class="vr-close" onclick="closeVR()">✕</button>
+                    <iframe id="vrFrame" allow="vr; xr; accelerometer; gyroscope; magnetometer; autoplay"></iframe>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="content-grid">
+                    <!-- Left Column - Details -->
+                    <div>
+                        <!-- Info Card -->
+                        <div class="info-card">
+                            <div class="hostel-title">
+                                <h1 id="hostelName"></h1>
+                                <span class="verified-badge" id="verifiedBadge" style="display: none;">✓ Verified</span>
+                            </div>
+
+                            <div class="hostel-meta">
+                                <span class="meta-item">📍 <span id="distance"></span> km from University</span>
+                                <span class="meta-item">🏠 <span id="hostelType"></span></span>
+                                <span class="meta-item">👥 <span id="capacity"></span> occupants</span>
+                            </div>
+
+                            <div class="rating">
+                                <span class="stars" id="stars"></span>
+                                <span class="rating-value" id="averageRating"></span>
+                                <span class="rating-count">(<span id="ratingCount"></span> reviews)</span>
+                            </div>
+
+                            <p id="description" style="line-height: 1.8;"></p>
+
+                            <!-- Price History Chart -->
+                            <h3 style="margin: 30px 0 20px;">Price History</h3>
+                            <div class="chart-container">
+                                <canvas id="priceChart"></canvas>
+                            </div>
+
+                            <!-- Amenities -->
+                            <h3 style="margin: 30px 0 20px;">Amenities</h3>
+                            <div class="amenities-grid" id="amenities">
+                                <!-- Amenities will be loaded here -->
+                            </div>
+
+                            <!-- Location -->
+                            <h3 style="margin: 30px 0 20px;">Location</h3>
+                            <div id="map"></div>
+
+                            <!-- Owner Information -->
+                            <h3 style="margin: 30px 0 20px;">About the Owner</h3>
+                            <div class="owner-info">
+                                <div class="owner-avatar" id="ownerAvatar">O</div>
+                                <div class="owner-details">
+                                    <h3 id="ownerName"></h3>
+                                    <p id="ownerSince"></p>
+                                    <span class="fraud-score" id="fraudScore"></span>
+                                </div>
+                            </div>
+
+                            <!-- Emergency Contact -->
+                            <button class="emergency-btn" onclick="emergencyContact()">
+                                🚨 Emergency Contact
+                            </button>
+                        </div>
+
+                        <!-- Reviews Section -->
+                        <div class="reviews-section">
+                            <h2 style="margin-bottom: 30px;">Student Reviews</h2>
+                            <div id="reviewsList">
+                                <!-- Reviews will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Booking -->
+                    <div>
+                        <div class="booking-card">
+                            <div class="price">
+                                KES <span id="rent"></span> <span>/month</span>
+                            </div>
+
+                            <!-- Timer Widget -->
+                            <div class="timer-widget" id="timerWidget">
+                                <h3>Reserved for you!</h3>
+                                <div class="timer" id="timer">01:00:00</div>
+                                <p>Complete booking within 1 hour</p>
+                            </div>
+
+                            <!-- Price Breakdown -->
+                            <div class="price-breakdown" id="priceBreakdown">
+                                <div class="price-row">
+                                    <span>Rent</span>
+                                    <span id="rentAmount"></span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Deposit</span>
+                                    <span id="depositAmount"></span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Water</span>
+                                    <span id="waterCharge"></span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Electricity</span>
+                                    <span id="electricityCharge"></span>
+                                </div>
+                                <div class="price-row total-row">
+                                    <span>Total First Payment</span>
+                                    <span id="totalAmount"></span>
+                                </div>
+                            </div>
+
+                            <!-- Booking Form -->
+                            <div class="booking-form" id="bookingForm">
+                                <div class="form-group">
+                                    <label>Check-in Date</label>
+                                    <input type="date" id="checkInDate" min="" onchange="calculateTotal()">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Duration (months)</label>
+                                    <select id="duration" onchange="calculateTotal()">
+                                        <option value="1">1 month</option>
+                                        <option value="2">2 months</option>
+                                        <option value="3">3 months</option>
+                                        <option value="4">4 months</option>
+                                        <option value="5">5 months</option>
+                                        <option value="6">6 months</option>
+                                        <option value="7">7 months</option>
+                                        <option value="8">8 months</option>
+                                        <option value="9">9 months</option>
+                                        <option value="10">10 months</option>
+                                        <option value="11">11 months</option>
+                                        <option value="12">12 months</option>
+                                    </select>
+                                </div>
+
+                                <button class="btn btn-primary" style="width: 100%;" onclick="bookNow()" id="bookBtn">
+                                    Book Now
+                                </button>
+                            </div>
+
+                            <p style="text-align: center; color: var(--gray); font-size: 12px; margin-top: 15px;">
+                                By booking, you agree to our terms and conditions
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://your-oracle-backend.com/api';
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyBizaLbe_k0W-xEOBEhkNFcwZPC8eFl-OQ';
+        
+        let hostelId = new URLSearchParams(window.location.search).get('id');
+        let hostelData = null;
+        let map = null;
+        let marker = null;
+        let priceChart = null;
+        let bookingTimer = null;
+        let timeLeft = 3600; // 1 hour in seconds
+        let isReserved = false;
+
+        // Load Google Maps
+        function loadGoogleMaps() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // Initialize Map
+        window.initMap = function() {
+            if (!hostelData) return;
+            
+            const location = { lat: parseFloat(hostelData.latitude), lng: parseFloat(hostelData.longitude) };
+            
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: location,
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }]
+                    }
+                ]
+            });
+            
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                title: hostelData.name,
+                animation: google.maps.Animation.DROP
+            });
+
+            // Add info window
+            const infoWindow = new google.maps.InfoWindow({
+                content: `
+                    <div style="padding: 10px;">
+                        <h4 style="margin: 0 0 5px;">${hostelData.name}</h4>
+                        <p style="margin: 0; color: #666;">${hostelData.address}</p>
+                    </div>
+                `
+            });
+
+            marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+            });
+        };
+
+        // Load hostel details
+        async function loadHostelDetails() {
+            if (!hostelId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/hostels/${hostelId}/`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    hostelData = data;
+                    renderHostelDetails(data);
+                    
+                    // Hide loading, show content
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').style.display = 'block';
+                    
+                    // Load Google Maps
+                    loadGoogleMaps();
+                    
+                    // Check if hostel is reserved by current user
+                    checkReservationStatus();
+                } else {
+                    showError('Hostel not found');
+                }
+            } catch (error) {
+                console.error('Error loading hostel:', error);
+                document.getElementById('loading').innerHTML = 'Error loading hostel details';
+            }
+        }
+
+        function renderHostelDetails(data) {
+            // Basic info
+            document.getElementById('hostelName').textContent = data.name;
+            document.getElementById('distance').textContent = data.distance_to_university;
+            document.getElementById('hostelType').textContent = data.hostel_type.replace('_', ' ');
+            document.getElementById('description').textContent = data.description;
+            
+            // Verified badge
+            if (data.is_verified) {
+                document.getElementById('verifiedBadge').style.display = 'inline-block';
+            }
+            
+            // Rating
+            const stars = '★'.repeat(Math.round(data.average_rating)) + '☆'.repeat(5 - Math.round(data.average_rating));
+            document.getElementById('stars').textContent = stars;
+            document.getElementById('averageRating').textContent = data.average_rating.toFixed(1);
+            document.getElementById('ratingCount').textContent = data.rating_count;
+            
+            // Pricing
+            document.getElementById('rent').textContent = parseInt(data.rent).toLocaleString();
+            document.getElementById('rentAmount').textContent = `KES ${parseInt(data.rent).toLocaleString()}`;
+            document.getElementById('depositAmount').textContent = `KES ${parseInt(data.deposit).toLocaleString()}`;
+            document.getElementById('waterCharge').textContent = `KES ${parseInt(data.water_charge || 0).toLocaleString()}`;
+            document.getElementById('electricityCharge').textContent = `KES ${parseInt(data.electricity_charge || 0).toLocaleString()}`;
+            
+            // Calculate total
+            calculateTotal();
+            
+            // Images
+            if (data.images && data.images.length > 0) {
+                // Main image
+                document.querySelector('#mainImage img').src = data.images[0].image;
+                
+                // Thumbnails
+                const thumbnailGrid = document.getElementById('thumbnailGrid');
+                thumbnailGrid.innerHTML = '';
+                
+                data.images.forEach((image, index) => {
+                    const thumb = document.createElement('div');
+                    thumb.className = `thumbnail ${image.is_360 ? 'vr-thumb' : ''} ${index === 0 ? 'active' : ''}`;
+                    thumb.innerHTML = `<img src="${image.image}" alt="Hostel image ${index + 1}" onclick="changeMainImage('${image.image}', ${index})">`;
+                    thumbnailGrid.appendChild(thumb);
+                });
+            }
+            
+            // Amenities
+            const amenitiesList = document.getElementById('amenities');
+            amenitiesList.innerHTML = '';
+            
+            const amenities = [
+                { name: 'WiFi', key: 'has_wifi' },
+                { name: 'Water', key: 'has_water' },
+                { name: 'Electricity', key: 'has_electricity' },
+                { name: 'Security', key: 'has_security' },
+                { name: 'Parking', key: 'has_parking' },
+                { name: 'Kitchen', key: 'has_kitchen' },
+                { name: 'Bathroom', key: 'has_bathroom' },
+                { name: 'Furniture', key: 'has_furniture' },
+                { name: 'Fridge', key: 'has_fridge' },
+                { name: 'TV', key: 'has_tv' }
+            ];
+            
+            amenities.forEach(amenity => {
+                if (data[amenity.key]) {
+                    const div = document.createElement('div');
+                    div.className = 'amenity-item available';
+                    div.innerHTML = `✓ ${amenity.name}`;
+                    amenitiesList.appendChild(div);
+                }
+            });
+            
+            // Owner info
+            if (data.owner) {
+                document.getElementById('ownerName').textContent = data.owner.business_name;
+                document.getElementById('ownerSince').textContent = `Member since ${new Date(data.owner.created_at).getFullYear()}`;
+                document.getElementById('ownerAvatar').textContent = data.owner.business_name.charAt(0);
+                
+                const fraudScore = data.owner.fraud_score || 0;
+                const fraudElement = document.getElementById('fraudScore');
+                fraudElement.textContent = `Fraud Score: ${fraudScore}`;
+                
+                if (fraudScore < 20) {
+                    fraudElement.className = 'fraud-score fraud-low';
+                } else if (fraudScore < 50) {
+                    fraudElement.className = 'fraud-score fraud-medium';
+                } else {
+                    fraudElement.className = 'fraud-score fraud-high';
+                }
+            }
+            
+            // Price history chart
+            if (data.price_history && data.price_history.length > 0) {
+                renderPriceChart(data.price_history);
+            }
+            
+            // Reviews
+            if (data.reviews) {
+                renderReviews(data.reviews);
+            }
+            
+            // Set min date for check-in
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('checkInDate').min = today;
+            document.getElementById('checkInDate').value = today;
+        }
+
+        function changeMainImage(src, index) {
+            document.querySelector('#mainImage img').src = src;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+                if (i === index) {
+                    thumb.classList.add('active');
+                } else {
+                    thumb.classList.remove('active');
+                }
+            });
+        }
+
+        function renderPriceChart(priceHistory) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            const dates = priceHistory.map(p => new Date(p.changed_at).toLocaleDateString());
+            const prices = priceHistory.map(p => p.rent);
+            
+            if (priceChart) {
+                priceChart.destroy();
+            }
+            
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Rent (KES)',
+                        data: prices,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'KES ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderReviews(reviews) {
+            const reviewsList = document.getElementById('reviewsList');
+            reviewsList.innerHTML = '';
+            
+            if (reviews.length === 0) {
+                reviewsList.innerHTML = '<p style="text-align: center; color: var(--gray);">No reviews yet</p>';
+                return;
+            }
+            
+            reviews.forEach(review => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                
+                const stars = '★'.repeat(review.overall_rating) + '☆'.repeat(5 - review.overall_rating);
+                
+                card.innerHTML = `
+                    <div class="review-header">
+                        <div class="reviewer">
+                            <div class="reviewer-avatar">${review.student_name ? review.student_name.charAt(0) : 'S'}</div>
+                            <div class="reviewer-info">
+                                <h4>${review.student_name || 'Anonymous'}</h4>
+                                <p>${new Date(review.created_at).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">${stars}</div>
+                    </div>
+                    <div class="review-text">${review.comment}</div>
+                `;
+                
+                reviewsList.appendChild(card);
+            });
+        }
+
+        function calculateTotal() {
+            const rent = parseFloat(hostelData.rent) || 0;
+            const deposit = parseFloat(hostelData.deposit) || 0;
+            const water = parseFloat(hostelData.water_charge) || 0;
+            const electricity = parseFloat(hostelData.electricity_charge) || 0;
+            const duration = parseInt(document.getElementById('duration').value) || 1;
+            
+            const total = (rent * duration) + deposit + water + electricity;
+            document.getElementById('totalAmount').textContent = `KES ${total.toLocaleString()}`;
+            
+            return total;
+        }
+
+        async function bookNow() {
+            const token = localStorage.getItem('access_token');
+            
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const checkInDate = document.getElementById('checkInDate').value;
+            const duration = parseInt(document.getElementById('duration').value);
+            const totalAmount = calculateTotal();
+            
+            // Calculate commission (10%)
+            const commissionAmount = totalAmount * 0.1;
+            
+            document.getElementById('bookBtn').disabled = true;
+            document.getElementById('bookBtn').textContent = 'Processing...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        hostel: hostelId,
+                        check_in_date: checkInDate,
+                        duration_months: duration,
+                        rent_amount: parseFloat(hostelData.rent),
+                        deposit_amount: parseFloat(hostelData.deposit),
+                        total_amount: totalAmount,
+                        commission_amount: commissionAmount
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Show timer widget
+                    isReserved = true;
+                    document.getElementById('timerWidget').classList.add('show');
+                    document.getElementById('bookingForm').style.display = 'none';
+                    
+                    // Start countdown
+                    startCountdown(data.reserved_until);
+                    
+                    showSuccess('Booking successful! You have 1 hour to complete payment.');
+                } else {
+                    showError(data.error || 'Booking failed');
+                }
+            } catch (error) {
+                console.error('Booking error:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                document.getElementById('bookBtn').disabled = false;
+                document.getElementById('bookBtn').textContent = 'Book Now';
+            }
+        }
+
+        function startCountdown(until) {
+            const endTime = new Date(until).getTime();
+            
+            bookingTimer = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = endTime - now;
+                
+                if (distance < 0) {
+                    clearInterval(bookingTimer);
+                    document.getElementById('timer').textContent = 'Expired';
+                    document.getElementById('timerWidget').classList.remove('show');
+                    document.getElementById('bookingForm').style.display = 'block';
+                    isReserved = false;
+                    return;
+                }
+                
+                const hours = Math.floor(distance / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('timer').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        async function checkReservationStatus() {
+            const token = localStorage.getItem('access_token');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings/?hostel=${hostelId}&status=reserved`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const booking = data.results[0];
+                    if (booking.student.id === JSON.parse(localStorage.getItem('user')).id) {
+                        isReserved = true;
+                        document.getElementById('timerWidget').classList.add('show');
+                        document.getElementById('bookingForm').style.display = 'none';
+                        startCountdown(booking.reserved_until);
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking reservation:', error);
+            }
+        }
+
+        async function emergencyContact() {
+            const token = localStorage.getItem('access_token');
+            
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (confirm('This will send an emergency alert to the hostel owner. Continue?')) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/notifications/emergency/`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            hostel_id: hostelId
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        alert('Emergency alert sent successfully');
+                    } else {
+                        alert('Failed to send emergency alert');
+                    }
+                } catch (error) {
+                    console.error('Emergency contact error:', error);
+                    alert('Network error. Please try again.');
+                }
+            }
+        }
+
+        function openVR(imageUrl) {
+            document.getElementById('vrView').classList.add('show');
+            document.getElementById('vrFrame').src = imageUrl;
+        }
+
+        function closeVR() {
+            document.getElementById('vrView').classList.remove('show');
+            document.getElementById('vrFrame').src = '';
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        function showError(message) {
+            alert(message);
+        }
+
+        function showSuccess(message) {
+            alert(message);
+        }
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Load hostel details
+        loadHostelDetails();
+
+        // Check authentication
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            document.getElementById('bookingForm').innerHTML = 
+                '<p style="text-align: center;"><a href="login.html">Login</a> to book this hostel</p>';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ../backend
+    container_name: kirinyaga-backend
+    restart: always
+    env_file:
+      - ../backend/.env
+    volumes:
+      - ../backend:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - redis
+    networks:
+      - kirinyaga-network
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 4 --threads 2 --access-logfile - --error-logfile -"
+
+  redis:
+    image: redis:7-alpine
+    container_name: kirinyaga-redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - kirinyaga-network
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+
+  celery:
+    build: ../backend
+    container_name: kirinyaga-celery
+    restart: always
+    env_file:
+      - ../backend/.env
+    volumes:
+      - ../backend:/app
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - kirinyaga-network
+    command: celery -A core worker --loglevel=info --concurrency=4
+
+  celery-beat:
+    build: ../backend
+    container_name: kirinyaga-celery-beat
+    restart: always
+    env_file:
+      - ../backend/.env
+    volumes:
+      - ../backend:/app
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - kirinyaga-network
+    command: celery -A core beat --loglevel=info
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: kirinyaga-nginx
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - static_volume:/static
+      - media_volume:/media
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - kirinyaga-network
+
+networks:
+  kirinyaga-network:
+    driver: bridge
+
+volumes:
+  static_volume:
+  media_volume:
+  redis_data:

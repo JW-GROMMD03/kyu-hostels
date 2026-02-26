@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Kirinyaga Hostels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --primary-dark: #b91c1c;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-badge {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-badge i {
+            font-size: 60px;
+            color: var(--primary);
+            background: #fee2e2;
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .warning {
+            text-align: center;
+            color: var(--primary);
+            font-size: 14px;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: #fee2e2;
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .twofa-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .twofa-section.show {
+            display: block;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: var(--primary);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link a:hover {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="admin-badge">
+            <i>🔒</i>
+            <h2>Admin Portal</h2>
+        </div>
+
+        <div class="warning">
+            ⚠️ Authorized Personnel Only
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="loginForm" onsubmit="handleAdminLogin(event)">
+            <div class="form-group">
+                <label for="email">Admin Email</label>
+                <input type="email" id="email" required placeholder="admin@kirinyagahostels.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="Enter your password">
+            </div>
+
+            <div class="twofa-section" id="twofaSection">
+                <div class="form-group">
+                    <label for="twofaCode">2FA Code</label>
+                    <input type="text" id="twofaCode" placeholder="Enter 6-digit code from Google Authenticator">
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">
+                <span id="btnText">Login to Admin Dashboard</span>
+            </button>
+        </form>
+
+        <div class="back-link">
+            <a href="/">&larr; Back to Main Site</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://your-oracle-backend.com/api';
+        let userId = null;
+
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const twofaCode = document.getElementById('twofaCode').value;
+
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('btnText').textContent = 'Authenticating...';
+            document.getElementById('errorMessage').classList.remove('show');
+
+            try {
+                if (document.getElementById('twofaSection').classList.contains('show')) {
+                    // Verify 2FA
+                    const response = await fetch(`${API_BASE_URL}/auth/verify-2fa/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            token: twofaCode
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Store tokens
+                        localStorage.setItem('admin_token', data.access);
+                        localStorage.setItem('admin_refresh', data.refresh);
+                        localStorage.setItem('admin_user', JSON.stringify(data.user));
+
+                        // Redirect to admin dashboard
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        showError(data.error || 'Invalid 2FA code');
+                    }
+                } else {
+                    // Initial login
+                    const response = await fetch(`${API_BASE_URL}/auth/login/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email,
+                            password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        if (data.requires_2fa) {
+                            // Show 2FA section
+                            userId = data.user_id;
+                            document.getElementById('twofaSection').classList.add('show');
+                            document.getElementById('btnText').textContent = 'Verify 2FA';
+                        } else if (data.user.role === 'admin') {
+                            // Store tokens
+                            localStorage.setItem('admin_token', data.access);
+                            localStorage.setItem('admin_refresh', data.refresh);
+                            localStorage.setItem('admin_user', JSON.stringify(data.user));
+
+                            // Redirect to admin dashboard
+                            window.location.href = 'dashboard.html';
+                        } else {
+                            showError('Unauthorized: Admin access only');
+                        }
+                    } else {
+                        showError(data.error || 'Invalid credentials');
+                    }
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Network error. Please check your connection.');
+            } finally {
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('btnText').textContent = 
+                    document.getElementById('twofaSection').classList.contains('show') ? 'Verify 2FA' : 'Login to Admin Dashboard';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+
+        // Check if already logged in
+        const adminToken = localStorage.getItem('admin_token');
+        if (adminToken) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

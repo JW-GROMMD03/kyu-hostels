@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roommate Finder - Kirinyaga Hostels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 0;
+        }
+
+        .page-title {
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            color: var(--dark);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: var(--gray);
+        }
+
+        /* Profile Setup */
+        .profile-setup {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .profile-setup h2 {
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .range-slider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .range-slider input {
+            flex: 1;
+        }
+
+        .range-value {
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* Lifestyle Tags */
+        .lifestyle-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tag {
+            padding: 10px 20px;
+            background: var(--light);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .tag.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        /* Interests */
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .interest-item {
+            padding: 10px;
+            background: var(--light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .interest-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        /* Matches Grid */
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .match-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+
+        .match-score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .match-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .match-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .match-course {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .match-body {
+            padding: 20px;
+        }
+
+        .match-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: var(--gray);
+        }
+
+        .match-interests {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .interest-tag {
+            padding: 5px 10px;
+            background: var(--light);
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .match-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .match-actions .btn {
+            flex: 1;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid var(--light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 50px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background: #1a1a1a;
+        }
+        
+        .dark-mode .navbar,
+        .dark-mode .profile-setup,
+        .dark-mode .match-card {
+            background: #2d2d2d;
+        }
+        
+        .dark-mode .page-title h1 {
+            color: white;
+        }
+        
+        .dark-mode .tag,
+        .dark-mode .interest-item {
+            background: #404040;
+            color: var(--light);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="window.location.href='index.html'">Kirinyaga Hostels</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard-student.html">Dashboard</a>
+                <a href="settings.html">Settings</a>
+                <a href="#" onclick="toggleDarkMode()">🌙</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="page-title">
+                <h1>Roommate Finder</h1>
+                <p>Find the perfect roommate who matches your lifestyle and preferences</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+
+            <!-- Profile Setup -->
+            <div class="profile-setup" id="profileSetup">
+                <h2>Your Roommate Profile</h2>
+                
+                <div class="form-grid">
+                    <div>
+                        <div class="form-group">
+                            <label>Budget Range (KES/month)</label>
+                            <div class="range-slider">
+                                <input type="range" id="budgetMin" min="0" max="50000" step="1000" value="5000" oninput="updateBudgetRange()">
+                                <input type="range" id="budgetMax" min="0" max="100000" step="1000" value="20000" oninput="updateBudgetRange()">
+                            </div>
+                            <div class="range-value" id="budgetDisplay">KES 5,000 - 20,000</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Maximum Distance from University (km)</label>
+                            <div class="range-slider">
+                                <input type="range" id="maxDistance" min="1" max="20" value="5" oninput="updateDistance()">
+                            </div>
+                            <div class="range-value" id="distanceDisplay">5 km</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Preferred Gender</label>
+                            <select id="preferredGender">
+                                <option value="any">Any</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="form-group">
+                            <label>Study Habits</label>
+                            <select id="studyHabits">
+                                <option value="morning">Morning Person</option>
+                                <option value="night">Night Owl</option>
+                                <option value="flexible">Flexible</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cleanliness (1-5)</label>
+                            <div class="range-slider">
+                                <input type="range" id="cleanliness" min="1" max="5" value="3" oninput="updateCleanliness()">
+                            </div>
+                            <div class="range-value" id="cleanlinessDisplay">3/5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lifestyle-tags">
+                    <div class="tag" onclick="toggleLifestyle('smoking')" id="smokingTag">🚬 Smoking</div>
+                    <div class="tag" onclick="toggleLifestyle('drinking')" id="drinkingTag">🍷 Drinking</div>
+                    <div class="tag" onclick="toggleLifestyle('pets')" id="petsTag">🐕 Pets</div>
+                    <div class="tag" onclick="toggleLifestyle('visitors')" id="visitorsTag">👥 Visitors</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="bio" placeholder="Tell potential roommates about yourself..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Interests (select all that apply)</label>
+                    <div class="interests-grid" id="interestsGrid">
+                        <div class="interest-item" onclick="toggleInterest('music')">🎵 Music</div>
+                        <div class="interest-item" onclick="toggleInterest('sports')">⚽ Sports</div>
+                        <div class="interest-item" onclick="toggleInterest('gaming')">🎮 Gaming</div>
+                        <div class="interest-item" onclick="toggleInterest('reading')">📚 Reading</div>
+                        <div class="interest-item" onclick="toggleInterest('movies')">🎬 Movies</div>
+                        <div class="interest-item" onclick="toggleInterest('cooking')">🍳 Cooking</div>
+                        <div class="interest-item" onclick="toggleInterest('travel')">✈️ Travel</div>
+                        <div class="interest-item" onclick="toggleInterest('photography')">📸 Photography</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveProfile()">Save Profile & Find Matches</button>
+            </div>
+
+            <!-- Matches Section -->
+            <div id="matchesSection" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Your Matches</h2>
+                
+                <!-- Loading State -->
+                <div id="matchesLoader" class="loader"></div>
+
+                <!-- Matches Grid -->
+                <div id="matchesGrid" class="matches-grid" style="display: none;">
+                    <!-- Matches will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://your-oracle-backend.com/api';
+        let token = localStorage.getItem('access_token');
+        let lifestyle = {
+            smoking: false,
+            drinking: false,
+            pets: false,
+            visitors: true
+        };
+        let interests = [];
+
+        // Check authentication
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // Load existing profile
+        async function loadProfile() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/roommate/profile/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    populateProfile(data);
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        function populateProfile(data) {
+            // Budget
+            document.getElementById('budgetMin').value = data.budget_min || 5000;
+            document.getElementById('budgetMax').value = data.budget_max || 20000;
+            updateBudgetRange();
+
+            // Distance
+            document.getElementById('maxDistance').value = data.preferred_distance || 5;
+            updateDistance();
+
+            // Gender preference
+            document.getElementById('preferredGender').value = data.preferred_gender || 'any';
+
+            // Study habits
+            document.getElementById('studyHabits').value = data.study_habit || 'flexible';
+
+            // Cleanliness
+            document.getElementById('cleanliness').value = data.cleanliness || 3;
+            updateCleanliness();
+
+            // Lifestyle
+            lifestyle = {
+                smoking: data.smoking || false,
+                drinking: data.drinking || false,
+                pets: data.pets || false,
+                visitors: data.visitors !== undefined ? data.visitors : true
+            };
+            updateLifestyleTags();
+
+            // Bio
+            document.getElementById('bio').value = data.bio || '';
+
+            // Interests
+            interests = data.interests || [];
+            updateInterests();
+
+            // If profile exists, show matches
+            if (data.id) {
+                loadMatches();
+            }
+        }
+
+        function updateBudgetRange() {
+            const min = parseInt(document.getElementById('budgetMin').value);
+            const max = parseInt(document.getElementById('budgetMax').value);
+            
+            if (min > max) {
+                document.getElementById('budgetMax').value = min;
+                document.getElementById('budgetDisplay').textContent = `KES ${min.toLocaleString()} - ${min.toLocaleString()}`;
+            } else {
+                document.getElementById('budgetDisplay').textContent = `KES ${min.toLocaleString()} - ${max.toLocaleString()}`;
+            }
+        }
+
+        function updateDistance() {
+            const distance = document.getElementById('maxDistance').value;
+            document.getElementById('distanceDisplay').textContent = `${distance} km`;
+        }
+
+        function updateCleanliness() {
+            const value = document.getElementById('cleanliness').value;
+            document.getElementById('cleanlinessDisplay').textContent = `${value}/5`;
+        }
+
+        function toggleLifestyle(item) {
+            lifestyle[item] = !lifestyle[item];
+            updateLifestyleTags();
+        }
+
+        function updateLifestyleTags() {
+            const tags = ['smoking', 'drinking', 'pets', 'visitors'];
+            tags.forEach(tag => {
+                const element = document.getElementById(`${tag}Tag`);
+                if (lifestyle[tag]) {
+                    element.classList.add('active');
+                } else {
+                    element.classList.remove('active');
+                }
+            });
+        }
+
+        function toggleInterest(interest) {
+            const index = interests.indexOf(interest);
+            if (index === -1) {
+                interests.push(interest);
+            } else {
+                interests.splice(index, 1);
+            }
+            updateInterests();
+        }
+
+        function updateInterests() {
+            document.querySelectorAll('.interest-item').forEach(item => {
+                const text = item.textContent.trim().slice(2); // Remove emoji
+                if (interests.includes(text.toLowerCase())) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        async function saveProfile() {
+            const profileData = {
+                budget_min: parseInt(document.getElementById('budgetMin').value),
+                budget_max: parseInt(document.getElementById('budgetMax').value),
+                preferred_distance: parseInt(document.getElementById('maxDistance').value),
+                preferred_gender: document.getElementById('preferredGender').value,
+                study_habit: document.getElementById('studyHabits').value,
+                cleanliness: parseInt(document.getElementById('cleanliness').value),
+                smoking: lifestyle.smoking,
+                drinking: lifestyle.drinking,
+                pets: lifestyle.pets,
+                visitors: lifestyle.visitors,
+                bio: document.getElementById('bio').value,
+                interests: interests
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/roommate/profile/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                if (response.ok) {
+                    showSuccess('Profile saved successfully! Finding matches...');
+                    loadMatches();
+                } else {
+                    const data = await response.json();
+                    showError(data.error || 'Failed to save profile');
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                showError('Network error. Please try again.');
+            }
+        }
+
+        async function loadMatches() {
+            document.getElementById('profileSetup').style.display = 'none';
+            document.getElementById('matchesSection').style.display = 'block';
+            document.getElementById('matchesLoader').style.display = 'block';
+            document.getElementById('matchesGrid').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/roommate/matches/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    renderMatches(data);
+                }
+            } catch (error) {
+                console.error('Error loading matches:', error);
+                showError('Failed to load matches');
+            } finally {
+                document.getElementById('matchesLoader').style.display = 'none';
+                document.getElementById('matchesGrid').style.display = 'grid';
+            }
+        }
+
+        function renderMatches(matches) {
+            const grid = document.getElementById('matchesGrid');
+            grid.innerHTML = '';
+
+            if (!matches || matches.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i>👥</i>
+                        <h3>No Matches Found</h3>
+                        <p>We couldn't find any roommates matching your criteria. Try adjusting your preferences.</p>
+                        <button class="btn btn-primary" style="margin-top: 20px;" onclick="resetProfile()">
+                            Edit Profile
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            matches.forEach(match => {
+                const score = Math.round(match.match_score);
+                let scoreClass = '';
+                if (score >= 80) scoreClass = 'high';
+                else if (score >= 60) scoreClass = 'medium';
+                else scoreClass = 'low';
+
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.innerHTML = `
+                    <div class="match-header">
+                        <div class="match-score">${score}% Match</div>
+                        <div class="match-avatar">${match.name ? match.name.charAt(0) : 'S'}</div>
+                        <div class="match-name">${match.name || 'Anonymous'}</div>
+                        <div class="match-course">${match.course || 'Student'} - Year ${match.year || '?'}</div>
+                    </div>
+                    <div class="match-body">
+                        <div class="match-detail">
+                            <span>💰</span> Budget: KES ${match.budget_min?.toLocaleString()} - ${match.budget_max?.toLocaleString()}
+                        </div>
+                        <div class="match-detail">
+                            <span>📍</span> Max Distance: ${match.preferred_distance || '?'} km
+                        </div>
+                        <div class="match-detail">
+                            <span>📚</span> Study Habits: ${match.study_habit || 'Flexible'}
+                        </div>
+                        <div class="match-interests">
+                            ${match.interests?.map(i => `<span class="interest-tag">${i}</span>`).join('') || ''}
+                        </div>
+                        <div class="match-actions">
+                            <button class="btn btn-primary" onclick="connect('${match.id}')">Connect</button>
+                            <button class="btn btn-outline" onclick="viewProfile('${match.id}')">View Profile</button>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function connect(userId) {
+            // Implement connection request
+            alert('Connection request sent!');
+        }
+
+        function viewProfile(userId) {
+            // Implement profile view
+            alert('Profile view coming soon');
+        }
+
+        function resetProfile() {
+            document.getElementById('profileSetup').style.display = 'block';
+            document.getElementById('matchesSection').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const alert = document.getElementById('successAlert');
+            alert.textContent = message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        function showError(message) {
+            const alert = document.getElementById('errorAlert');
+            alert.textContent = message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Load profile
+        loadProfile();
+    </script>
+</body>
+</html>
